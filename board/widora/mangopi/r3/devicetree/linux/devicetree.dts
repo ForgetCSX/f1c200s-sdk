@@ -268,6 +268,41 @@
 	// 		};
 	// 	};
 	// };
+
+	focaltech@38{ 
+		compatible = "focaltech,fts";	
+		reg = <0x38>;  					
+		// interrupt-parent = <&msm_gpio>;				
+		// interrupts = <13 0x02>;
+		// focaltech,reset-gpio = <&msm_gpio 12 0x01>; 
+		// focaltech,irq-gpio = <&msm_gpio 13 0x02>; 	
+
+		interrupt-parent = <&pio>;
+		interrupts = <4 0 IRQ_TYPE_EDGE_FALLING>; // PE1
+		focaltech,irq-gpio = <&pio 4 0 GPIO_ACTIVE_LOW>; // PE1
+		focaltech,reset-gpio = <&pio 0 0 GPIO_ACTIVE_LOW>; // PA0
+		focaltech,max-touch-number = <5>;			
+		focaltech,display-coords =  <0 0 480 480>;
+
+
+		// interrupt = <&pio 4 0 GPIO_ACTIVE_HIGH>; // PA1
+		// reset-gpio = <&pio 0 0 GPIO_ACTIVE_HIGH>; // PA0
+		// touchscreen-size-x = <480>;
+		// touchscreen-size-y = <480>;
+		// touchscreen-inverted-x;
+		// touchscreen-inverted-x-y;
+
+		// pinctrl-names = "pmx_ts_active","pmx_ts_suspend","pmx_ts_release";
+		// pinctrl-0 = <&ts_int_active &ts_reset_active>;
+		// pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		// pinctrl-2 = <&ts_release>;
+
+		// focaltech,have-key;
+		// focaltech,key-number = <3>;	
+		// focaltech,keys = <139 102 158>; 	
+		// focaltech,key-y-coord = <2000>; 
+		// focaltech,key-x-coords = <200 600 800>;
+	};
 };
 
 // &csi0 {
