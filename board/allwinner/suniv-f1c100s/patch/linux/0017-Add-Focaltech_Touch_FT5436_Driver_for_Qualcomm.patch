@@ -1,13 +1,13 @@
-From bce14779cc1d17fdc962afe31f9fa216b1474832 Mon Sep 17 00:00:00 2001
+From 860f707c86502a8df62d604db7b7280c73f4db74 Mon Sep 17 00:00:00 2001
 From: ForgetCSX <1404360768@qq.com>
-Date: Sun, 26 May 2024 22:22:25 +0800
-Subject: [PATCH] Add-Focaltech_Touch_FT5436_Driver_for_Qualcomm
+Date: Sat, 1 Jun 2024 18:18:35 +0800
+Subject: [PATCH] focaltech_touch drivers
 
 ---
  drivers/input/touchscreen/Kconfig             |    2 +
  drivers/input/touchscreen/Makefile            |    2 +
- .../input/touchscreen/focaltech_touch/Kconfig |   14 +
- .../touchscreen/focaltech_touch/Makefile      |   13 +
+ .../input/touchscreen/focaltech_touch/Kconfig |   25 +
+ .../touchscreen/focaltech_touch/Makefile      |   16 +
  .../focaltech_touch/focaltech_common.h        |  159 ++
  .../focaltech_touch/focaltech_config.h        |  229 ++
  .../focaltech_touch/focaltech_core.c          | 1700 +++++++++++++++
@@ -22,8 +22,8 @@ Subject: [PATCH] Add-Focaltech_Touch_FT5436_Driver_for_Qualcomm
  .../focaltech_touch/focaltech_gesture.c       |  592 ++++++
  .../focaltech_touch/focaltech_i2c.c           |  240 +++
  .../focaltech_point_report_check.c            |  135 ++
- .../include/firmware/fw_sample.i              |    0
- 19 files changed, 7510 insertions(+)
+ .../include/firmware/fw_sample.i              |    1 +
+ 19 files changed, 7525 insertions(+)
  create mode 100644 drivers/input/touchscreen/focaltech_touch/Kconfig
  create mode 100644 drivers/input/touchscreen/focaltech_touch/Makefile
  create mode 100644 drivers/input/touchscreen/focaltech_touch/focaltech_common.h
@@ -66,11 +66,13 @@ index 94c616240..42e8924ff 100644
 \ No newline at end of file
 diff --git a/drivers/input/touchscreen/focaltech_touch/Kconfig b/drivers/input/touchscreen/focaltech_touch/Kconfig
 new file mode 100644
-index 000000000..6cbbd7d88
+index 000000000..bcd7916ae
 --- /dev/null
 +++ b/drivers/input/touchscreen/focaltech_touch/Kconfig
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,25 @@
++#
 +# Focaltech Touchscreen driver configuration
++#
 +
 +config TOUCHSCREEN_FTS
 +        bool "Focaltech Touchscreen"
@@ -80,17 +82,29 @@ index 000000000..6cbbd7d88
 +		  Say Y here if you have Focaltech touch panel.
 +		  If unsure, say N.
 +
++config TOUCHSCREEN_DEBUG_EN
++		bool "Show debug log info"
++		depends on TOUCHSCREEN_FTS
++		default n
++		help
++		Say Y here if enable it for debug, disable it for release.
++		If unsure, say N.
++
 +config TOUCHSCREEN_FTS_DIRECTORY
 +    string "Focaltech ts directory name"
 +    default "focaltech_touch"
 +    depends on TOUCHSCREEN_FTS
++    
+\ No newline at end of file
 diff --git a/drivers/input/touchscreen/focaltech_touch/Makefile b/drivers/input/touchscreen/focaltech_touch/Makefile
 new file mode 100644
-index 000000000..7a3de3d55
+index 000000000..5443b739e
 --- /dev/null
 +++ b/drivers/input/touchscreen/focaltech_touch/Makefile
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,16 @@
++#
 +# Makefile for the focaltech touchscreen drivers.
++#
 +
 +# Each configuration option enables a list of files.
 +
@@ -103,6 +117,7 @@ index 000000000..7a3de3d55
 +obj-$(CONFIG_TOUCHSCREEN_FTS)   +=  focaltech_i2c.o
 +obj-$(CONFIG_TOUCHSCREEN_FTS)   +=  focaltech_point_report_check.o
 +obj-$(CONFIG_TOUCHSCREEN_FTS)   +=  focaltech_flash/
++
 diff --git a/drivers/input/touchscreen/focaltech_touch/focaltech_common.h b/drivers/input/touchscreen/focaltech_touch/focaltech_common.h
 new file mode 100644
 index 000000000..b24cbc7e8
@@ -270,7 +285,7 @@ index 000000000..b24cbc7e8
 +#endif /* __LINUX_FOCALTECH_COMMON_H__ */
 diff --git a/drivers/input/touchscreen/focaltech_touch/focaltech_config.h b/drivers/input/touchscreen/focaltech_touch/focaltech_config.h
 new file mode 100644
-index 000000000..0d1beb06d
+index 000000000..9a522513c
 --- /dev/null
 +++ b/drivers/input/touchscreen/focaltech_touch/focaltech_config.h
 @@ -0,0 +1,229 @@
@@ -386,7 +401,7 @@ index 000000000..0d1beb06d
 + * show debug log info
 + * enable it for debug, disable it for release
 + */
-+#define FTS_DEBUG_EN                            1
++#define FTS_DEBUG_EN                            CONFIG_TOUCHSCREEN_DEBUG_EN
 +
 +/*
 + * Linux MultiTouch Protocol
@@ -486,19 +501,19 @@ index 000000000..0d1beb06d
 + * define your own fw_file, the sample one to be replaced is invalid
 + * NOTE: if FTS_GET_VENDOR_ID_NUM > 1, it's the fw corresponding with FTS_VENDOR_ID
 + */
-+//#define FTS_UPGRADE_FW_FILE                      "include/firmware/fw_sample.i"
++#define FTS_UPGRADE_FW_FILE                      "include/firmware/fw_sample.i"
 +
 +/*
 + * if FTS_GET_VENDOR_ID_NUM >= 2, fw corrsponding with FTS_VENDOR_ID2
 + * define your own fw_file, the sample one is invalid
 + */
-+//#define FTS_UPGRADE_FW2_FILE                     "include/firmware/fw_sample.i"
++#define FTS_UPGRADE_FW2_FILE                     "include/firmware/fw_sample.i"
 +
 +/*
 + * if FTS_GET_VENDOR_ID_NUM >= 3, fw corrsponding with FTS_VENDOR_ID3
 + * define your own fw_file, the sample one is invalid
 + */
-+//#define FTS_UPGRADE_FW3_FILE                     "include/firmware/fw_sample.i"
++#define FTS_UPGRADE_FW3_FILE                     "include/firmware/fw_sample.i"
 +
 +/*********************************************************/
 +
@@ -4465,7 +4480,7 @@ index 000000000..bca972ebb
 +
 diff --git a/drivers/input/touchscreen/focaltech_touch/focaltech_flash.c b/drivers/input/touchscreen/focaltech_touch/focaltech_flash.c
 new file mode 100644
-index 000000000..7957e07a1
+index 000000000..ac305daf2
 --- /dev/null
 +++ b/drivers/input/touchscreen/focaltech_touch/focaltech_flash.c
 @@ -0,0 +1,1857 @@
@@ -4515,15 +4530,15 @@ index 000000000..7957e07a1
 +*****************************************************************************/
 +/* Upgrade FW/PRAMBOOT/LCD CFG */
 +u8 fw_file[] = {
-+// #include FTS_UPGRADE_FW_FILE
++#include FTS_UPGRADE_FW_FILE
 +};
 +
 +u8 fw_file2[] = {
-+// #include FTS_UPGRADE_FW2_FILE
++#include FTS_UPGRADE_FW2_FILE
 +};
 +
 +u8 fw_file3[] = {
-+// #include FTS_UPGRADE_FW3_FILE
++#include FTS_UPGRADE_FW3_FILE
 +};
 +
 +struct upgrade_fw fw_list[] = {
@@ -6333,7 +6348,7 @@ index 000000000..55738314b
 +++ b/drivers/input/touchscreen/focaltech_touch/focaltech_flash.h
 @@ -0,0 +1,167 @@
 +/************************************************************************
-+* Copyright (C) 2012-2018, Focaltech Systems (R)£¬All Rights Reserved.
++* Copyright (C) 2012-2018, Focaltech Systems (R)ï¿½ï¿½All Rights Reserved.
 +*
 +* File Name: focaltech_flash.h
 +*
@@ -7669,7 +7684,12 @@ index 000000000..7157f4440
 +
 diff --git a/drivers/input/touchscreen/focaltech_touch/include/firmware/fw_sample.i b/drivers/input/touchscreen/focaltech_touch/include/firmware/fw_sample.i
 new file mode 100644
-index 000000000..e69de29bb
+index 000000000..c43d0930c
+--- /dev/null
++++ b/drivers/input/touchscreen/focaltech_touch/include/firmware/fw_sample.i
+@@ -0,0 +1 @@
++00000000
+\ No newline at end of file
 -- 
 2.25.1
 
