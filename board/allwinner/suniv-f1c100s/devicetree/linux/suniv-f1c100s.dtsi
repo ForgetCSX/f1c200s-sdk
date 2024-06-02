@@ -145,6 +145,8 @@
 			clock-names = "ahb", "mod";
 			resets = <&ccu RST_BUS_SPI1>;
 			status = "disabled";
+			pinctrl-names = "default";
+			pinctrl-0 = <&spi1_pins>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
@@ -368,6 +370,13 @@
 			spi0_pins: spi0-pins {
 				pins = "PC0", "PC1", "PC2", "PC3";
 				function = "spi0";
+				bias-pull-up;
+			};
+
+			spi1_pins: spi1-pins {
+				// 注意：这里不将CS交给SPI控制器
+				pins = "PE8", "PE9", "PE10";
+				function = "spi1";
 				bias-pull-up;
 			};
 
