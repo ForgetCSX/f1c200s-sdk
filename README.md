@@ -57,3 +57,18 @@ You can flash a board by Linux (Recommended) or Windows system.
 - rebuild-uboot.sh: Recompile U-Boot when you direct edit U-Boot sourcecode.
 - rebuild-kernel.sh: Recompile Kernel when you direct edit Kernel sourcecode.
 - emulate-chroot.sh: Emulate target rootfs by chroot.
+
+## Update configuration to Buildroot
+Buildroot
+```
+make savedefconfig
+```
+Kernel
+```
+make linux-update-defconfig
+```
+Uboot
+```
+make uboot-update-defconfig
+```
+
