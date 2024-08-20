@@ -1246,6 +1246,7 @@ F:	package/erlang-eimp/
 F:	package/erlang-goldrush/
 F:	package/erlang-idna/
 F:	package/erlang-jiffy/
+F:	package/esp-hosted/
 F:	package/erlang-jose/
 F:	package/erlang-lager/
 F:	package/erlang-p1-acme/

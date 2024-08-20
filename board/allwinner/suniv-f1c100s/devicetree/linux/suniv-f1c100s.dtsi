@@ -357,10 +357,10 @@
 				bias-pull-up;
 			};
 
-			// pwm0_pe_pins: pwm0-pe-pins {
-			// 	pins = "PE12";
-			// 	function = "pwm0";
-			// };
+			pwm0_pe_pins: pwm0-pe-pins {
+				pins = "PE12";
+				function = "pwm0";
+			};
 
 			pwm1_pe_pins: pwm1-pe-pins {
 				pins = "PE6";
@@ -374,7 +374,7 @@
 			};
 
 			spi1_pins: spi1-pins {
-				// 注意：这里不将CS交给SPI控制器
+				// cs not ctrl
 				pins = "PE8", "PE9", "PE10";
 				function = "spi1";
 				bias-pull-up;
@@ -397,10 +397,10 @@
 				function = "i2c0";
 			};
 
-			// i2c0_pd_pins: i2c0-pd-pins {
-			// 	pins = "PD0", "PD12";
-			// 	function = "i2c0";
-			// };
+			i2c0_pd_pins: i2c0-pd-pins {
+				pins = "PD0", "PD12";
+				function = "i2c0";
+			};
 
 			i2c1_pd_pins: i2c1-pd-pins {
 				pins = "PD5", "PD6";
@@ -413,26 +413,25 @@
 				function = "csi";
 			};
 			
-			// clk_out_pins: clk-out-pins {
-			// 	pins = "PE11";
-			// 	function = "clk0";
-			// 	bias-pull-up;
-			// };
+			clk_out_pins: clk-out-pins {
+				pins = "PE11";
+				function = "clk0";
+				bias-pull-up;
+			};
 
 			rtp_pins: rtp-pins {
 				pins = "PA0", "PA1", "PA2", "PA3";
 				function = "rtp";
 			};
 
-			// lcd_rgb565_pins: lcd-rgb565-pins {
-			// 	pins = "PD1", "PD2", "PD3", "PD4", "PD5",
-			// 		"PD6", "PD7", "PD8", "PD9", "PD10", "PD11", 
-			// 		"PD13", "PD14", "PD15", "PD16", "PD17",
-			// 		"PD18", "PD19", "PD20", "PD21";
-			// 	function = "lcd";
-			// };
+			lcd_rgb565_pins: lcd-rgb565-pins {
+				pins = "PD1", "PD2", "PD3", "PD4", "PD5",
+					"PD6", "PD7", "PD8", "PD9", "PD10", "PD11", 
+					"PD13", "PD14", "PD15", "PD16", "PD17",
+					"PD18", "PD19", "PD20", "PD21";
+				function = "lcd";
+			};
 
-						//复用LCD为模式
 			lcd_rgb666_pins: lcd-rgb666-pins {
 				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
 				       "PD5", "PD6", "PD7", "PD8", "PD9",
@@ -559,7 +558,7 @@
 			clocks = <&ccu CLK_BUS_I2C0>;
 			resets = <&ccu RST_BUS_I2C0>;
 			pinctrl-names = "default";
-			pinctrl-0 = <&i2c0_pe_pins>;
+			pinctrl-0 = <&i2c0_pd_pins>;
 			status = "disabled";
 			#address-cells = <1>;
 			#size-cells = <0>;

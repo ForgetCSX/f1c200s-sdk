@@ -133,16 +133,32 @@
 &spi1 {
 	status = "okay";
 
-	wifi@0 {
+	esp8089: wifi@0 {
 		compatible = "esp8089";
 		spi-cpol;
 		spi-cpha;
 		reg = <0>;
 		spi-max-frequency = <30000000>;
 
-		cs = <135>;//PE7 128 + 7 = 135
-		reset= <132>;//PE4 128 + 4 = 132
-		interrupt= <133>;//PE5 128 + 5 = 133
+		cs = <135>;			//PE7 128 + 7 = 135
+		reset= <132>;		//PE4 128 + 4 = 132
+		interrupt= <133>;	//PE5 128 + 5 = 133
+		debug= <0>;
+		
+		status = "disabled";
+	};
+
+	esp32: wifi@0 {
+		compatible = "esp_spi";
+		spi-cpol;				//mode 2
+		//spi-cpha;
+		reg = <0>;
+		spi-max-frequency = <10000000>;
+
+		cs = <135>;				//PE7 128 + 7 = 135
+		reset= <0>;				//PA0 0 + 0 = 0
+		shake-hands = <134>;	//PE6 128 + 6 = 134
+		interrupt= <133>;		//PE5 128 + 5 = 133
 		debug= <0>;
 		
 		status = "okay";
@@ -299,9 +315,11 @@
 		// focaltech,irq-gpio = <&msm_gpio 13 0x02>; 	
 
 		interrupt-parent = <&pio>;
-		interrupts = <4 0 IRQ_TYPE_EDGE_FALLING>; // PE1
-		focaltech,irq-gpio = <&pio 4 0 GPIO_ACTIVE_LOW>; // PE1
-		focaltech,reset-gpio = <&pio 0 0 GPIO_ACTIVE_LOW>; // PA0
+		// interrupts = <4 0 IRQ_TYPE_EDGE_FALLING>; 			// PE4
+		// focaltech,irq-gpio = <&pio 4 0 GPIO_ACTIVE_HIGH>; 	// PE4
+		interrupts = <4 4 IRQ_TYPE_EDGE_FALLING>; 			// PE4
+		focaltech,irq-gpio = <&pio 4 4 GPIO_ACTIVE_HIGH>; 	// PE4
+		focaltech,reset-gpio = <&pio 0 1 GPIO_ACTIVE_LOW>; 	// PA1
 		focaltech,max-touch-number = <5>;			
 		focaltech,display-coords =  <0 0 480 480>;
 
