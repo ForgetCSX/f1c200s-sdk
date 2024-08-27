@@ -1,0 +1,77 @@
+diff -uprN a/esp_hosted_ng/host/main.c b/esp_hosted_ng/host/main.c
+--- a/esp_hosted_ng/host/main.c	2023-07-11 17:03:08.000000000 +0800
++++ b/esp_hosted_ng/host/main.c	2024-08-27 22:25:49.745199774 +0800
+@@ -845,6 +845,7 @@ static void deinit_adapter(void)
+ 
+ static void esp_reset(void)
+ {
++	resetpin = 0;
+ 	if (resetpin != HOST_GPIO_PIN_INVALID) {
+ 		/* Check valid GPIO or not */
+ 		if (!gpio_is_valid(resetpin)) {
+diff -uprN a/esp_hosted_ng/host/spi/esp_spi.c b/esp_hosted_ng/host/spi/esp_spi.c
+--- a/esp_hosted_ng/host/spi/esp_spi.c	2023-07-11 17:03:08.000000000 +0800
++++ b/esp_hosted_ng/host/spi/esp_spi.c	2024-08-27 22:17:51.535854758 +0800
+@@ -495,14 +495,16 @@ static struct spi_controller *spi_busnum
+ 
+ static int spi_dev_init(int spi_clk_mhz)
+ {
++	char str [32];
+ 	int status = 0;
++	struct device *dev;
+ 	struct spi_board_info esp_board = {{0}};
+ 	struct spi_master *master = NULL;
+ 
+ 	strlcpy(esp_board.modalias, "esp_spi", sizeof(esp_board.modalias));
+ 	esp_board.mode = SPI_MODE_2;
+ 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
+-	esp_board.bus_num = 0;
++	esp_board.bus_num = 1;
+ 	esp_board.chip_select = 0;
+ 
+ 	master = spi_busnum_to_master(esp_board.bus_num);
+@@ -511,6 +513,18 @@ static int spi_dev_init(int spi_clk_mhz)
+ 		return -ENODEV;
+ 	}
+ 
++	snprintf(str, sizeof(str), "%s.%u", dev_name(&master->dev), esp_board.chip_select);
++	dev = bus_find_device_by_name(&spi_bus_type, NULL, str);
++	if(dev)
++	{
++		esp_info("esp32_spi: Find a dev using spi, deleting!\n");
++		device_del(dev);
++	}
++	else
++	{
++		esp_info("esp32_spi: No dev using spi!\n");
++	}
++
+ 	spi_context.esp_spi_dev = spi_new_device(master, &esp_board);
+ 
+ 	if (!spi_context.esp_spi_dev) {
+@@ -524,6 +538,10 @@ static int spi_dev_init(int spi_clk_mhz)
+ 		esp_err("Failed to setup new SPI device");
+ 		return status;
+ 	}
++	
++	gpio_request(135, "esp_cs_gpio");
++	gpio_direction_output(135, 0);
++	gpio_free(135);
+ 
+ 	esp_info("ESP32 peripheral is registered to SPI bus [%d],chip select [%d], SPI Clock [%d]\n",
+ 			esp_board.bus_num,
+diff -uprN a/esp_hosted_ng/host/spi/esp_spi.h b/esp_hosted_ng/host/spi/esp_spi.h
+--- a/esp_hosted_ng/host/spi/esp_spi.h	2023-07-11 17:03:08.000000000 +0800
++++ b/esp_hosted_ng/host/spi/esp_spi.h	2024-08-27 22:13:15.402561947 +0800
+@@ -9,9 +9,9 @@
+ 
+ #include "esp.h"
+ 
+-#define HANDSHAKE_PIN           22
++#define HANDSHAKE_PIN           134
+ #define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
+-#define SPI_DATA_READY_PIN      27
++#define SPI_DATA_READY_PIN      133
+ #define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
+ #define SPI_BUF_SIZE            1600
+ 

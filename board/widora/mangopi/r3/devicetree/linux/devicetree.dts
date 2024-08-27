@@ -342,6 +342,12 @@
 		// focaltech,key-y-coord = <2000>; 
 		// focaltech,key-x-coords = <200 600 800>;
 	};
+
+	custom_io_ext@2a{
+        compatible = "custom,io-ext";
+        reg = <0x2a>;
+        // interrupts = <23>;
+    };
 };
 
 // &csi0 {

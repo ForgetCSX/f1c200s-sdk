@@ -2373,4 +2373,6 @@ menu "Text editors and viewers"
 	source "package/vim/Config.in"
 endmenu
 
+source "package/custom_io_ext/Config.in"
+
 endmenu
