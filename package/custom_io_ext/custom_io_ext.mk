@@ -13,6 +13,7 @@ endif
 
 ifeq ($(BR2_CUSTOM_IO_EXT_MODULE),y)
 define CUSTOM_IO_EXT_INSTALL_TARGET_CMDS
+    $(shell mkdir -p $(TARGET_DIR)/lib/modules/$(LINUX_VERSION)/extra/)
     $(INSTALL) -m 644 $(CUSTOM_IO_EXT_BUILD_DIR)/$(CUSTOM_IO_EXT_MODULES).ko $(TARGET_DIR)/lib/modules/$(LINUX_VERSION)/extra/
 endef
 endif
