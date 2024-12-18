@@ -17,7 +17,7 @@ sudo apt install python3-distutils
 ### Download BSP
 **Notice: Root permission is not necessery for download or extract.**
 ```shell
-git clone https://github.com/aodzip/buildroot-tiny200
+git clone https://github.com/ForgetCSX/f1c200s-sdk.git
 ```
 
 ## Make the first build
