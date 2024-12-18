@@ -28,7 +28,7 @@ git clone https://github.com/ForgetCSX/f1c200s-sdk.git
 
 **Generally, you only need to apply it once.**
 ```shell
-cd buildroot-tiny200
+cd f1c200s-sdk
 make widora_mangopi_r3_defconfig
 ```
 
